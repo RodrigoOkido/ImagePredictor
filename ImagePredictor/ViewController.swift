@@ -41,7 +41,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer: CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
         
-        guard let model = try? VNCoreMLModel(for: SqueezeNet().model) else {return}
+        let config = MLModelConfiguration()
+        guard let coreMLModel = try? SqueezeNet(configuration: config),
+              let model = try? VNCoreMLModel(for: coreMLModel.model) else {return}
         let request = VNCoreMLRequest(model: model) { (finished, error) in
             
             guard let results = finished.results as? [VNClassificationObservation] else {return}
@@ -50,7 +52,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             DispatchQueue.main.async {
                 self.imagePredictorLabel.text = "\(firstResult.confidence) - \(firstResult.identifier)"
             }
-            print(firstResult)
         }
 
         try? VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:]).perform([request])
