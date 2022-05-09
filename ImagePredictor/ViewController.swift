@@ -11,7 +11,7 @@ import Vision
 
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
 
-    
+    // Label of output result
     @IBOutlet weak var imagePredictorLabel: UILabel!
     
     
@@ -38,6 +38,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     
+    /**
+     Model used: SqueezeNet - (developer.apple.com/machine-learning/models/)
+     CaptureOutput function classifies the image and makes a prediction about what the element being pointed by camera represents.
+     The output printed is composed by the first result confidence and identifier.
+     */
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer: CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {return}
         
